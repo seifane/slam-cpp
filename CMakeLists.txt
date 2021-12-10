@@ -20,7 +20,7 @@ add_executable(slam vfc.cpp
         src/FeatureMatcher.cpp
         src/MatchFilterer.cpp
         src/PoseEstimator.cpp
-        src/OpenCVVisualizer.cpp src/FramePreprocessor.cpp)
+        src/OpenCVVisualizer.cpp src/FramePreprocessor.cpp include/Helpers.hpp)
 
 add_executable(old Ransac.hpp vfc.cpp main4.cpp Frame.cpp)
 target_link_libraries(slam ${OpenCV_LIBS} python3.9 Threads::Threads)

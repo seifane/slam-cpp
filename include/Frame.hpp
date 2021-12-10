@@ -41,6 +41,7 @@ namespace slam {
         //Computed
         cv::Mat R;
         cv::Mat T;
+        cv::Mat cameraPose;
 	};
 }
 

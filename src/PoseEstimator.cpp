@@ -3,6 +3,7 @@
 //
 
 #include "PoseEstimator.hpp"
+#include "Helpers.hpp"
 
 slam::PoseEstimator::PoseEstimator() {
 
@@ -41,6 +42,7 @@ cv::Point3d slam::PoseEstimator::estimatePose(const std::shared_ptr <Frame> &pre
     cv::Mat T;
 
     std::vector<std::pair<cv::KeyPoint, cv::KeyPoint>> filteredMatches;
+    double error = 0;
     for (int i = 0; i < mask.rows; i++) {
         auto res = mask.at<bool>(i, 0);
         if (res) {
@@ -64,12 +66,14 @@ cv::Point3d slam::PoseEstimator::estimatePose(const std::shared_ptr <Frame> &pre
 //	std::cout << "isValid = " << CheckCoherentRotation(R) << std::endl;
 
     if (!previousFrame->R.empty()) {
-        currentFrame->T = previousFrame->T + previousFrame->R * T;
-        currentFrame->R = previousFrame->R * R;
+        currentFrame->T = T;
+        currentFrame->R = R;
+        currentFrame->cameraPose = previousFrame->cameraPose + -R.t() * T;
     } else {
         currentFrame->R = R.clone();
         currentFrame->T = T.clone();
+        currentFrame->cameraPose = (cv::Mat_<double>(3, 1) << 1, 1, 1);
     }
 
-    return cv::Point3d(currentFrame->T.at<double>(0, 0), currentFrame->T.at<double>(0, 1), currentFrame->T.at<double>(0, 2));
+    return cv::Point3d(currentFrame->cameraPose.at<double>(0, 0), currentFrame->cameraPose.at<double>(0, 1), currentFrame->cameraPose.at<double>(0, 2));
 }
